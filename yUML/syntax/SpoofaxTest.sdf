@@ -1,0 +1,39 @@
+%% Grammar for the SpoofaxTest language
+%% By default, based on an example "entities" syntax
+module SpoofaxTest
+
+imports Common
+
+exports
+
+  context-free start-symbols
+    Start
+
+  context-free syntax
+    
+	Definition*										-> Start {cons("Diagram")} 
+	Entity Connection Entity						->  Definition{cons("Definition")}
+	Entity											->  Definition{cons("Definition")}
+	"[note:" NoteToken+ "]"								-> Entity {cons("Note")}
+	ID												-> NoteToken{cons("NoteToken")}
+    "[" ClassDef "]"								-> Entity {cons("Class")}
+    %% ID*  Properties*							->ClassDef{cons("ClassDefinition")}
+    ID Splash? Properties*							->ClassDef{cons("ClassDefinition")}
+    "{bg:" ID "}"									->Splash{cons("Splash")}
+    "|" Field* ID 									->Properties{cons("ClassFields")}
+    "|" Field+	 									->Properties{cons("ClassFields")}
+    SingleField+ ";"								->Field{cons("Field")}
+    ID												->SingleField{cons("SingleField")}
+    "^" 											->  Connection{cons("Inheritance")}
+	Label* Relation? Card?  Connector Card? Relation? Label*		-> Connection{cons("Connection")}
+	INT												-> Card{cons("Cardinality")}
+	"*"												-> Card{cons("Cardinality")}
+	%% INT| "*" | (INT ".." INT)						-> Card{cons("Cardinality")}
+	"-"												->	Connector{cons("Connector")}
+	"-.-"											->	Connector{cons("Dependency")}
+	"<"												->	Relation{cons("LeftRelation")}
+	">"												->	Relation{cons("RightRelation")}
+	"+"												->  Relation{cons("Aggregation")}
+	"<>"											->  Relation{cons("Aggregation")}	
+	"++"											->	Relation{cons("Composition")}
+	ID												-> Label{cons("Label")}

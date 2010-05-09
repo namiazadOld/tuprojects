@@ -1,0 +1,12 @@
+module SpoofaxTest-Colorer
+
+imports SpoofaxTest-Colorer.generated
+
+colorer
+                       
+	// Type.SimpleType	: red
+	// Type.SetType	: gray
+	// Anno._			: black
+  // This file can be used for custom colorer rules.                  
+  //                                                                  
+  // See the imported file for a brief introduction and examples.     
