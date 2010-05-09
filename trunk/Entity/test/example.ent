@@ -1,0 +1,20 @@
+module example
+
+// Example "Entity" program (see syntax/Entity.sdf for the grammar)
+    entity Foo {
+      valueProp  :: String   // value type
+      entityRef  -> Bar      // reference
+      entityComp <> Baz      // composition
+      oneToMany  -> Set<FooBar>
+    }
+    entity Bar { 
+      name :: String
+    }
+    entity Baz {
+          name :: String
+
+      ownedBy -> Foo 
+    }
+    entity Foobar : Bar {
+      value :: Int
+    }
