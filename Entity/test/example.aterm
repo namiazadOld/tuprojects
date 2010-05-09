@@ -1,0 +1,24 @@
+Module(
+  "example"
+, [ Entity(
+      "Foo"
+    , None()
+    , [ Value("valueProp", Type("String"))
+      , Reference("entityRef", Type("Bar"), None())
+      , Composition("entityComp", Type("Baz"))
+      , Reference("oneToMany", SetType(Type("Set"), Type("FooBar")), None())
+      ]
+    )
+  , Entity("Bar", None(), [Value("name", Type("String"))])
+  , Entity(
+      "Baz"
+    , None()
+    , [Value("name", Type("String")), Reference("ownedBy", Type("Foo"), None())]
+    )
+  , Entity(
+      "Foobar"
+    , Some(SuperType(Type("Bar")))
+    , [Value("value", Type("Int"))]
+    )
+  ]
+)

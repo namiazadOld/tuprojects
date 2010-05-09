@@ -1,0 +1,22 @@
+%% Grammar for the Entity language
+%% By default, based on an example "entities" syntax
+module Entity
+
+imports Common
+
+exports
+
+  context-free start-symbols
+    Start
+
+  context-free syntax
+  
+    "module" ID Definition*       -> Start {cons("Module")}
+    "entity" ID SuperType? "{" Property* "}" -> Definition {cons("Entity")}
+    ":" Type						-> SuperType{cons("SuperType")}
+    ID "::" Type					-> Property {cons("Value")}
+    ID "->" Type Inverse?			->  Property {cons("Reference")}
+    ID "<>" Type            	    ->  Property {cons("Composition")}
+	Type "<" Type ">"	 				->Type {cons("SetType")}
+	"(" "inverse" "=" Type "." ID ")"	-> Inverse{cons("Inverse")}
+    ID            						-> Type {cons("Type")}
