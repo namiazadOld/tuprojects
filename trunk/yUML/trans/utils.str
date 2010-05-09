@@ -1,0 +1,53 @@
+module utils
+
+imports include/SpoofaxTest
+  libstratego-lib
+  libstratego-gpp
+  libstratego-aterm
+  include/SpoofaxTest
+  lib/editor-common.generated
+strategies
+	
+	show-pretty-printed-yuml :
+		(selected, position, ast, path, project-path) -> (filename, result-string)
+        with
+          filename := <guarantee-extension(|"yuml")> path;
+          result-string := <pp-yuml> selected
+          
+    rules
+		pp-yuml = alltd(pp)
+
+		pp : Diagram(def*) -> <map(pp); concat-strings>def*
+		pp : Definition(ent) -> $[[<pp>ent]
+		]
+		pp : Definition(ent,con, ent2) -> $[[<pp>ent ][<pp>con][<pp>ent2]
+		]
+		pp : Class(str) -> $[$[$[<pp> str]$]$]
+		pp : ClassFields(field*,fld) -> $[|[<map(pp);concat-strings>field*] [fld] ]	
+		// pp : Field(field*) -> $[[<map(pp);concat-strings>field*]; ]
+		pp : Field(field*) -> $[[<map(pp);concat-strings>field*];]
+		pp : SingleField(f) -> $[[" "][f]]
+		pp : ClassDefinition(nme, splash, prop*) -> $[[nme][<pp>splash][<map(pp);concat-strings>prop*]]
+		pp : Splash(color) -> $[{bg:[color]} ]
+		pp : Connection(lblLeft*, relLeft, cardLeft, connector,cardRight, relRight , lblRight*) ->
+						 $[[<map(pp);concat-strings>lblLeft*][<pp>relLeft][<pp>cardLeft][<pp>connector][<pp>cardRight][<pp>relRight][<map(pp);concat-strings>lblRight*]]
+		
+					 
+		pp : LeftRelation() 		-> $[<]
+		pp : RightRelation() 		-> $[>]
+		pp : Connector()			-> $[-]
+		pp : Dependency()			-> $[-.-]
+		pp : Inheritance()			-> $[^]
+		pp : Aggregation()			-> $[<>]
+		pp : Composition()			-> $[++]
+
+		pp : Note(note*)			-> $[$[$note:[<map(pp);concat-strings>note*]$]$]
+		pp : NoteToken(token)		-> $[[token][" "]]
+		pp : Label(lbl)				-> lbl
+		pp : Cardinality(card)		-> card
+		pp : Some(str) -> <pp>str
+		pp : None() -> $[]
+		pp : [t] -> $[[<pp>t]]
+		pp : [] -> $[]
+		pp : t* -> <map(pp)> t*
+		pp : (t,c) -> $[[<pp>t][<pp>c]]

@@ -1,0 +1,4 @@
+[Foo|field;]
+[Foo]ref4->[Boos]
+[Boos]
+[Boos]fle->[Foo]

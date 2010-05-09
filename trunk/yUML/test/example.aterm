@@ -1,0 +1,39 @@
+Diagram(
+  [ Definition(
+      Class(
+        ClassDefinition(
+          "Foo"
+        , None()
+        , [ClassFields([Field([SingleField("field")])])]
+        )
+      )
+    )
+  , Definition(
+      Class(ClassDefinition("Foo", None(), []))
+    , Connection(
+        [Label("ref4")]
+      , None()
+      , None()
+      , Connector()
+      , None()
+      , Some(RightRelation())
+      , []
+      )
+    , Class(ClassDefinition("Boos", None(), []))
+    )
+  , Definition(Class(ClassDefinition("Boos", None(), [])))
+  , Definition(
+      Class(ClassDefinition("Boos", None(), []))
+    , Connection(
+        [Label("fle")]
+      , None()
+      , None()
+      , Connector()
+      , None()
+      , Some(RightRelation())
+      , []
+      )
+    , Class(ClassDefinition("Foo", None(), []))
+    )
+  ]
+)

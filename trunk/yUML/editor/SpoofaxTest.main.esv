@@ -1,0 +1,16 @@
+module SpoofaxTest.main
+
+imports SpoofaxTest-Builders SpoofaxTest-Colorer SpoofaxTest-Completions SpoofaxTest-Folding SpoofaxTest-Outliner SpoofaxTest-References SpoofaxTest-Syntax
+
+language General properties
+                  
+  name          : SpoofaxTest
+  id            : SpoofaxTest
+  extends       : Root
+                  
+  description   : "Spoofax/IMP-generated editor for the SpoofaxTest language"
+  url           : http://strategoxt.org
+                  
+  extensions    : spo
+  table         : include/SpoofaxTest.tbl
+  start symbols : Start

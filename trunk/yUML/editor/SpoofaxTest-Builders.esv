@@ -1,0 +1,16 @@
+
+module SpoofaxTest-Builders
+
+imports SpoofaxTest-Builders.generated
+
+        
+builders
+                                                                                        
+  provider : include/spoofaxtest.ctree                                      
+                                                                                        
+//  observer : editor-analyze                                                             
+                                                                                        
+  builder  : "Generate Java code"      = generate-java (openeditor) (realtime)          
+  builder  : "Show abstract syntax"    = generate-aterm (openeditor) (realtime) (meta)  
+  builder : "Pretty-print yUML" =	 show-pretty-printed-yuml (openeditor) (realtime) (meta)                                                                                        
+//  on save  : generate-java                                                              

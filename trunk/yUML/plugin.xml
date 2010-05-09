@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?eclipse version="3.0"?>
+
+<plugin>
+       <extension point="org.eclipse.imp.runtime.languageDescription">
+          <language extensions="spo" description="SpoofaxTest" language="SpoofaxTest" derivedFrom="DynamicRoot" validator="SpoofaxTest.SpoofaxTestValidator" validatorClass="SpoofaxTest.SpoofaxTestValidator"></language>
+       </extension>
+       <extension id="SpoofaxTest.parser" name="SpoofaxTest Parser" point="org.eclipse.imp.runtime.parser">
+          <parser class="SpoofaxTest.SpoofaxTestParseController" language="SpoofaxTest">
+          </parser>
+       </extension>    
+    </plugin>
