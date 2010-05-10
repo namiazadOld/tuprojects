@@ -18,4 +18,5 @@ builders
 //  builder  : "Generate Java code"   = generate-java (openeditor) (realtime)          
   builder  : "Show abstract syntax" = generate-aterm (openeditor) (realtime) (meta)  
   builder  : "Show yuml AST"    =  generate-yuml-aterm (openeditor) (realtime) (meta)
+  builder  : "Show yuml syntax"    =  generate-yuml-syntax (openeditor) (realtime) (meta)
   // on save  : generate-java                                                           

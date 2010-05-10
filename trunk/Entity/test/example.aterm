@@ -5,7 +5,7 @@ Module(
     , None()
     , [ Value("valueProp", Type("String"))
       , Reference("entityRef", Type("Bar"), None())
-      , Composition("entityComp", Type("Baz"))
+      , Composition("entityComp", Type("Baz"), None())
       , Reference("oneToMany", SetType(Type("Set"), Type("FooBar")), None())
       ]
     )
@@ -13,7 +13,11 @@ Module(
   , Entity(
       "Baz"
     , None()
-    , [Value("name", Type("String")), Reference("ownedBy", Type("Foo"), None())]
+    , [Reference(
+         "ownedBy"
+       , Type("Foo")
+       , Some(Inverse(Type("Foo"), "entityComp"))
+       )]
     )
   , Entity(
       "Foobar"

@@ -1,0 +1,75 @@
+Diagram(
+  [ Definition(
+      Class(
+        ClassDefinition(
+          "Foo"
+        , None()
+        , [ClassFields([Field([SingleField("valueProp")])])]
+        )
+      )
+    )
+  , Definition(
+      Class(ClassDefinition("Foo", None(), []))
+    , Connection(
+        [Label("entityRef")]
+      , None()
+      , None()
+      , Connector()
+      , None()
+      , Some(RightRelation())
+      , []
+      )
+    , Class(ClassDefinition("Bar", None(), []))
+    )
+  , Definition(
+      Class(ClassDefinition("Foo", None(), []))
+    , Connection(
+        [Label("oneToMany")]
+      , None()
+      , None()
+      , Connector()
+      , None()
+      , Some(RightRelation())
+      , [Label("*")]
+      )
+    , Class(ClassDefinition("FooBar", None(), []))
+    )
+  , Definition(
+      Class(
+        ClassDefinition(
+          "Bar"
+        , None()
+        , [ClassFields([Field([SingleField("name")])])]
+        )
+      )
+    )
+  , Definition(Class(ClassDefinition("Baz", None(), [])))
+  , Definition(
+      Class(ClassDefinition("Baz", None(), []))
+    , Connection(
+        [Label("ownedBy")]
+      , Some(LeftRelation())
+      , None()
+      , Connector()
+      , None()
+      , Some(Some(Composition()))
+      , [Label("entityComp")]
+      )
+    , Class(ClassDefinition("Foo", None(), []))
+    )
+  , Definition(
+      Class(
+        ClassDefinition(
+          "Foobar"
+        , None()
+        , [ClassFields([Field([SingleField("value")])])]
+        )
+      )
+    )
+  , Definition(
+      Class(ClassDefinition("Bar", None(), []))
+    , Inheritance()
+    , Class(ClassDefinition("Foobar", None(), []))
+    )
+  ]
+)

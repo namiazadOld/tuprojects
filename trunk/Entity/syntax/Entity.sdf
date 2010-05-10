@@ -16,7 +16,7 @@ exports
     ":" Type						-> SuperType{cons("SuperType")}
     ID "::" Type					-> Property {cons("Value")}
     ID "->" Type Inverse?			->  Property {cons("Reference")}
-    ID "<>" Type            	    ->  Property {cons("Composition")}
+    ID "<>" Type Inverse?          	    ->  Property {cons("Composition")}
 	Type "<" Type ">"	 				->Type {cons("SetType")}
 	"(" "inverse" "=" Type "." ID ")"	-> Inverse{cons("Inverse")}
     ID            						-> Type {cons("Type")}
