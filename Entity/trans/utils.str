@@ -6,41 +6,41 @@ imports include/SpoofaxTest
   libstratego-aterm
   include/SpoofaxTest
   lib/editor-common.generated
-  include/Entity
+  lib/Entity
 strategies
-	
-	show-pretty-printed-yuml :
+
+	generate-yuml-syntax:
 		(selected, position, ast, path, project-path) -> (filename, result-string)
         with
           filename := <guarantee-extension(|"yuml")> path;
+          result-string := <declare;remove-extra-fields;remove-some-cons;
+			rw;remove-redundant-fields;pp-yuml> selected
+          
+          	
+	show-pretty-printed-yuml :
+		(selected, position, ast, path, project-path) -> (filename, result-string)
+        with
+          filename := <guarantee-extension(|"ayuml")> path;
           result-string := <pp-yuml> selected
+
           
     rules
 		pp-yuml = alltd(pp)
 
-		pp : Diagram(def*) -> result
-			with debug(!0); result:=<map(pp); concat-strings>def*
-		pp : Definition(ent) -> result
-			with debug(!1); result:= $[[<pp>ent]
-			]
-		pp : Definition(ent,con, ent2) -> result
-			with debug(!2); result:=$[[<pp>ent ][<pp>con][<pp>ent2]
+		pp : Diagram(def*) -> <map(pp); concat-strings>def*
+		pp : Definition(ent) -> $[[<pp>ent]
 		]
-		pp : Class(str) -> result
-			with debug(!3); result:= $[$[$[<pp> str]$]$]
-		pp : ClassFields(field*,None()) -> result
-			with debug(!4); result:= $[|[<map(pp);concat-strings>field*]]	
+		pp : Definition(ent,con, ent2) -> $[[<pp>ent ][<pp>con][<pp>ent2]
+		]
+		pp : Class(str) -> $[$[$[<pp> str]$]$]
+		pp : ClassFields(field*,fld) -> $[|[<map(pp);concat-strings>field*] [fld] ]	
+		pp : ClassFields(field*) -> $[|[<map(pp);concat-strings>field*]]
 		// pp : Field(field*) -> $[[<map(pp);concat-strings>field*]; ]
-		pp : Field(field*) -> result
-			with debug(!5); result:=$[[<map(pp);concat-strings>field*];]
-		pp : SingleField(f) -> result
-			with debug(!6); result:=$[[" "][f]]
-		pp : ClassDefinition(nme, splash, prop*) -> result
-			with debug(!7); result:=$[[nme][<pp>splash][<map(pp);concat-strings>prop*]]
-		pp : Splash(color) -> result
-			with debug(!8); result:=$[{bg:[color]} ]
-		pp : Connection(lblLeft*, relLeft, cardLeft, connector,cardRight, relRight , lblRight*) -> result
-			with debug(!9); result:=
+		pp : Field(field*) -> $[[<map(pp);concat-strings>field*];]
+		pp : SingleField(f) -> $[[" "][f]]
+		pp : ClassDefinition(nme, splash, prop*) -> $[[nme][<pp>splash][<map(pp);concat-strings>prop*]]
+		pp : Splash(color) -> $[{bg:[color]} ]
+		pp : Connection(lblLeft*, relLeft, cardLeft, connector,cardRight, relRight , lblRight*) ->
 						 $[[<map(pp);concat-strings>lblLeft*][<pp>relLeft][<pp>cardLeft][<pp>connector][<pp>cardRight][<pp>relRight][<map(pp);concat-strings>lblRight*]]
 		
 					 
@@ -56,6 +56,7 @@ strategies
 		pp : NoteToken(token)		-> $[[token][" "]]
 		pp : Label(lbl)				-> lbl
 		pp : Cardinality(card)		-> card
+		// pp : Cardinality(c1,c2)		-> $[[c1]..[c2]]
 		pp : Some(str) -> <pp>str
 		pp : None() -> $[]
 		pp : [t] -> $[[<pp>t]]
@@ -68,35 +69,40 @@ strategies
 		(selected, position, ast, path, project-path) -> (filename, result-string)
         with
           filename := <guarantee-extension(|"yast")> path;
-          // result-string := <remove-extra-fields> selected
-          // result-string := <declare;remove-some-cons;rw;remove-redundant-fields> selected
-		result-string := <declare;remove-some-cons;rw;pp-yuml;remove-redundant-fields> selected
+          // result-string := <declare;remove-extra-fields> selected
+           // result-string := <declare;remove-extra-fields;remove-some-cons;rw;remove-redundant-fields> selected
+		result-string := <declare;remove-extra-fields;remove-some-cons;rw;remove-redundant-fields> selected
 	rules
 		declare = alltd(declare-entity)
 
 		declare-entity:
 			e@Entity(name, t , prop*)-> e
-				with debug(!100); <filter(inv(|name))>prop*
+				with debug(!100);say(!"Hello"); <filter(inv(|name))>prop*
 
 
     	inv(|from) : ref@Reference(var, Type(type), iv@Some(Inverse(Type(invType), invVar))) ->  ref
-    		with debug(!101); key:=<concat-strings> [from,"_",invType];say(!key); rules (IsInverse: from -> Some(Inverse(Type(invType), var)))  
+    		with debug(!101); key:=<concat-strings> [invType,"_",invVar];say(!key); rules (IsInverse: key ->  Some(LeftRelation()))  
+    	inv(|from) : comp@Composition(var, Type(type), iv@Some(Inverse(Type(invType), invVar))) ->  comp
+    		with debug(!102); key:=<concat-strings> [invType,"_",invVar];say(!key); rules (IsInverse: key ->  Some(Composition()))  
 //    		with debug(!101); key:=<concat-strings> [from,"_",invType]; rules (IsInverse: key -> invType)  
 
 		
-		remove-extra-fields =  alltd(rem-non-inv)
+		remove-extra-fields =  rem-non-inv
 
+		rem-non-inv : Module(t1, t2*) -> Module(t1, <map(rem-non-inv)>t2*)
 		rem-non-inv : 
-			e@Entity(name, t , prop*)-> e
-				with debug(!100); <filter(non-inv(|name))>prop*
+			e@Entity(name, t , prop*)-> Entity(name, t , <filter(not(non-inv(|name)))>prop*)
+			//	where debug(!100); 
 
-		non-inv(|from) : Reference(var, Type(type), None()) -> result
-    		with debug(!120);  result:= None()
+		non-inv(|from) : ref@Reference(var, type, None()) -> ref
+    		 where debug(!230);key:=<concat-strings>[from,"_",var]; value := <IsInverse>key; say(!value); rules (GetRelation: key -> Some(RightRelation()))
+		non-inv(|from) : comp@Composition(var, type, None()) -> comp
+    		 where debug(!231);key:=<concat-strings>[from,"_",var]; value := <IsInverse>key; say(!value); rules (GetRelation: key -> Some(Composition()))
 			
 
     rules
     	 remove-some-cons = topdown(try(\Some(x) -> x\))
-    	 remove-redundant-fields = topdown(try(\[ClassFields([], None())]->[]\))
+    	 remove-redundant-fields = topdown(try(\[ClassFields([])]->[]\))
     	// rewrite = rw
     	rw :Module(name, t*) -> result 
     		with debug(!1);  result := Diagram(<map(rw);flatten-list()>t*)
@@ -109,32 +115,27 @@ strategies
 
 		rw : Entity(name, SuperType(Type(super)) , prop*) -> result
 			with result := [
-				Definition(Class(ClassDefinition(name, None(),  ClassFields(<filter(vl)>prop*)))), 
-				Definition(Class(ClassDefinition(name, None(),[])) ,Inheritance() , Class(ClassDefinition(super, None(), []))),
+				Definition(Class(ClassDefinition(name, None(),  [ClassFields(<filter(vl)>prop*)]))), 
+				Definition( Class(ClassDefinition(super, None(), [])),Inheritance() ,Class(ClassDefinition(name, None(),[]))),
 				 <filter(ent(|name))>prop* 
 			] 
     	 
     		// with subClass:= <HasSubClass>; inheritance := Connection([], [], [], Inheritance(), [], [], []) 
     	vl: Value(val ,Type(t)) -> Field([SingleField(val)])
-    	
+
+//***********************REFERENCE    ***********************
     	ent(|from) : Reference(var, Type(type), None()) ->  result
     		 where debug(!3 ); result:= Definition(Class(ClassDefinition(from, None(),[])) , <rw>Reference(var,Type(type),None()) , Class(ClassDefinition(type, None(), []))) 
 
+    	ent(|from) : Reference(var, Type(type), inverse@Inverse(Type(invType), invVar)) ->  result
+    		 where debug(!255 );result:= Definition(Class(ClassDefinition(from, None(),[])) , <rw>Reference(var,Type(type),inverse) , Class(ClassDefinition(type, None(), []))) 
 
-//non inv
-    	// ent(|from) : Reference(var, Type(type), inverse@Inverse(Type(invType), invVar)) ->  result
-    		 // where debug(!250 );key:= <concat-strings>[from,"_", invVar];say(!key); ref := <HasInverse> key; say(!"FOUND"); result:= Definition(Class(ClassDefinition(from, None(),[])) , <rw>Reference(var,Type(type),inverse) , Class(ClassDefinition(type, None(), []))) 
-
-
-		rw : Reference(var, Type(type), Inverse(Type(invType), invVar)) -> result
-			with debug(!"260 "); result:= Connection([Label(var)], Some(LeftRelation()), None(), Connector(), None(), Some(RightRelation()), [Label(invVar)])
-// non inv end
-
- 
- 		mytest:t -> t
- 			with debug(!300)
 
 		rw : Reference(var, Type(type), None()) ->  Connection([Label(var)], None(), None(), Connector(), None(), Some(RightRelation()), [])
+		rw : Reference(var, Type(type), Inverse(Type(invType), invVar)) -> result
+			where debug(!"265 ");
+				key:=<concat-strings>[invType,"_",invVar];say(!key); value := <GetRelation>key; say(!"Value Found");
+				result:= Connection([Label(var)], Some(LeftRelation()), None(), Connector(), None(), Some(value), [Label(invVar)])
 
 
     	ent(|from) : Reference(var, SetType(Type(set),Type(type)), None()) ->  result
@@ -142,15 +143,23 @@ strategies
 
 		rw : Reference(var, SetType(Type(set),type), None()) -> result
 			with debug(!5); result:= Connection([Label(var)], None(), None(), Connector(), None(), Some(RightRelation()), [Label("*")])
+//***********************Composition    ***********************
+
+    	ent(|from) : Composition(var, Type(type),None()) ->  result
+    		with debug(!6 ); result:= Definition(Class(ClassDefinition(from, None(),[])) , <rw>Composition(var,Type(type),None()) , Class(ClassDefinition(type, None(), []))) 
+
+    	ent(|from) : Composition(var, Type(type), inverse@Inverse(Type(invType), invVar)) ->  result
+    		 where debug(!250 );result:= Definition(Class(ClassDefinition(from, None(),[])) , <rw>Composition(var,Type(type),inverse) , Class(ClassDefinition(type, None(), []))) 
 
 
-    	ent(|from) : Composition(var, Type(type)) ->  result
-    		with debug(!6 ); result:= Definition(Class(ClassDefinition(from, None(),[])) , <rw>Composition(var,Type(type)) , Class(ClassDefinition(type, None(), []))) 
+		rw : Composition(var, Type(type),None()) ->  Connection([Label(var)], Some(Composition()), None(), Connector(), None(), None(), [])
+		rw : Composition(var, Type(type), Inverse(Type(invType), invVar)) -> result
+			where debug(!"265 ");
+				key:=<concat-strings>[invType,"_",invVar];say(!key); value := <GetRelation>key; say(!"Comp Value Found");
+				result:= Connection([Label(var)], Some(value), None(), Connector(), None(), Some(Composition()), [Label(invVar)])
 
-		rw : Composition(var, Type(type)) ->  Connection([Label(var)], Some(Composition()), None(), Connector(), None(), None(), [])
+    	ent(|from) : Composition(var,  SetType(Type(set),type),None()) ->  result
+    		with debug(!7 ); result:= Definition(Class(ClassDefinition(from, None(),[])) , <rw>Composition(var,SetType(Type(set),type),None()) , Class(ClassDefinition(type, None(), []))) 
 
-    	ent(|from) : Composition(var,  SetType(Type(set),type)) ->  result
-    		with debug(!7 ); result:= Definition(Class(ClassDefinition(from, None(),[])) , <rw>Composition(var,SetType(Type(set),type)) , Class(ClassDefinition(type, None(), []))) 
-
-		rw : Composition(var,  SetType(Type(set),type)) ->  Connection([Label(var)], Some(Composition()), None(), Connector(), None(), None(), [Label("*")])
+		rw : Composition(var,  SetType(Type(set),type),None()) ->  Connection([Label(var)], Some(Composition()), None(), Connector(), None(), None(), [Label("*")])
 

@@ -1,0 +1,8 @@
+[Foo| valueProp;]
+[Foo]entityRef->[Bar]
+[Foo]oneToMany->*[FooBar]
+[Bar| name;]
+[Baz]
+[Baz]ownedBy<-++entityComp[Foo]
+[Foobar| value;]
+[Bar]^[Foobar]

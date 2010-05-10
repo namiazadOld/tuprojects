@@ -1,0 +1,27 @@
+module Entity
+
+signature
+  constructors
+    Inverse     : Type * ID -> Inverse
+    Type        : ID -> Type
+    SetType     : Type * Type -> Type
+    Composition : ID * Type * Option(Inverse) -> Property
+    Reference   : ID * Type * Option(Inverse) -> Property
+    Value       : ID * Type -> Property
+    SuperType   : Type -> SuperType
+    Entity      : ID * Option(SuperType) * List(Property) -> Definition
+    Module      : ID * List(Definition) -> Start
+                : String -> ID
+
+
+signature
+  constructors
+    Some : a -> Option(a)
+    None : Option(a)
+
+
+signature
+  constructors
+    Cons : a * List(a) -> List(a)
+    Nil  : List(a)
+    Conc : List(a) * List(a) -> List(a)
