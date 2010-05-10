@@ -56,7 +56,6 @@ strategies
 		pp : NoteToken(token)		-> $[[token][" "]]
 		pp : Label(lbl)				-> lbl
 		pp : Cardinality(card)		-> card
-		// pp : Cardinality(c1,c2)		-> $[[c1]..[c2]]
 		pp : Some(str) -> <pp>str
 		pp : None() -> $[]
 		pp : [t] -> $[[<pp>t]]
@@ -69,8 +68,6 @@ strategies
 		(selected, position, ast, path, project-path) -> (filename, result-string)
         with
           filename := <guarantee-extension(|"yast")> path;
-          // result-string := <declare;remove-extra-fields> selected
-           // result-string := <declare;remove-extra-fields;remove-some-cons;rw;remove-redundant-fields> selected
 		result-string := <declare;remove-extra-fields;remove-some-cons;rw;remove-redundant-fields> selected
 	rules
 		declare = alltd(declare-entity)
@@ -84,7 +81,6 @@ strategies
     		with debug(!101); key:=<concat-strings> [invType,"_",invVar];say(!key); rules (IsInverse: key ->  Some(LeftRelation()))  
     	inv(|from) : comp@Composition(var, Type(type), iv@Some(Inverse(Type(invType), invVar))) ->  comp
     		with debug(!102); key:=<concat-strings> [invType,"_",invVar];say(!key); rules (IsInverse: key ->  Some(Composition()))  
-//    		with debug(!101); key:=<concat-strings> [from,"_",invType]; rules (IsInverse: key -> invType)  
 
 		
 		remove-extra-fields =  rem-non-inv
@@ -92,7 +88,6 @@ strategies
 		rem-non-inv : Module(t1, t2*) -> Module(t1, <map(rem-non-inv)>t2*)
 		rem-non-inv : 
 			e@Entity(name, t , prop*)-> Entity(name, t , <filter(not(non-inv(|name)))>prop*)
-			//	where debug(!100); 
 
 		non-inv(|from) : ref@Reference(var, type, None()) -> ref
     		 where debug(!230);key:=<concat-strings>[from,"_",var]; value := <IsInverse>key; say(!value); rules (GetRelation: key -> Some(RightRelation()))
@@ -120,7 +115,6 @@ strategies
 				 <filter(ent(|name))>prop* 
 			] 
     	 
-    		// with subClass:= <HasSubClass>; inheritance := Connection([], [], [], Inheritance(), [], [], []) 
     	vl: Value(val ,Type(t)) -> Field([SingleField(val)])
 
 //***********************REFERENCE    ***********************
