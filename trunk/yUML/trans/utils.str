@@ -24,6 +24,7 @@ strategies
 		]
 		pp : Class(str) -> $[$[$[<pp> str]$]$]
 		pp : ClassFields(field*,fld) -> $[|[<map(pp);concat-strings>field*] [fld] ]	
+		pp : ClassFields(field*) -> $[|[<map(pp);concat-strings>field*]]
 		// pp : Field(field*) -> $[[<map(pp);concat-strings>field*]; ]
 		pp : Field(field*) -> $[[<map(pp);concat-strings>field*];]
 		pp : SingleField(f) -> $[[" "][f]]
@@ -45,6 +46,7 @@ strategies
 		pp : NoteToken(token)		-> $[[token][" "]]
 		pp : Label(lbl)				-> lbl
 		pp : Cardinality(card)		-> card
+		pp : Cardinality(c1,c2)		-> $[[c1]..[c2]]
 		pp : Some(str) -> <pp>str
 		pp : None() -> $[]
 		pp : [t] -> $[[<pp>t]]
