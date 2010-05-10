@@ -25,7 +25,6 @@ strategies
 		pp : Class(str) -> $[$[$[<pp> str]$]$]
 		pp : ClassFields(field*,fld) -> $[|[<map(pp);concat-strings>field*] [fld] ]	
 		pp : ClassFields(field*) -> $[|[<map(pp);concat-strings>field*]]
-		// pp : Field(field*) -> $[[<map(pp);concat-strings>field*]; ]
 		pp : Field(field*) -> $[[<map(pp);concat-strings>field*];]
 		pp : SingleField(f) -> $[[" "][f]]
 		pp : ClassDefinition(nme, splash, prop*) -> $[[nme][<pp>splash][<map(pp);concat-strings>prop*]]
