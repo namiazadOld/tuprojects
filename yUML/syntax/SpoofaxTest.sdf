@@ -21,6 +21,7 @@ exports
     ID Splash? Properties*							->ClassDef{cons("ClassDefinition")}
     "{bg:" ID "}"									->Splash{cons("Splash")}
     "|" Field* ID 									->Properties{cons("ClassFields")}
+    
     "|" Field+	 									->Properties{cons("ClassFields")}
     SingleField+ ";"								->Field{cons("Field")}
     ID												->SingleField{cons("SingleField")}
@@ -28,6 +29,7 @@ exports
 	Label* Relation? Card?  Connector Card? Relation? Label*		-> Connection{cons("Connection")}
 	INT												-> Card{cons("Cardinality")}
 	"*"												-> Card{cons("Cardinality")}
+	INT ".." INT									-> Card{cons("Cardinality")}
 	%% INT| "*" | (INT ".." INT)						-> Card{cons("Cardinality")}
 	"-"												->	Connector{cons("Connector")}
 	"-.-"											->	Connector{cons("Dependency")}

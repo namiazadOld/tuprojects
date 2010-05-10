@@ -1,0 +1,43 @@
+module SpoofaxTest
+
+signature
+  constructors
+    Label           : ID -> Label
+    Composition     : Relation
+    Aggregation     : Relation
+    RightRelation   : Relation
+    LeftRelation    : Relation
+    Dependency      : Connector
+    Connector       : Connector
+    Cardinality     : INT * INT -> Card
+    Cardinality     : Card
+    Cardinality     : INT -> Card
+    Connection      : List(Label) * Option(Relation) * Option(Card) * Connector * Option(Card) * Option(Relation) * List(Label) -> Connection
+    Inheritance     : Connection
+    SingleField     : ID -> SingleField
+    Field           : List(SingleField) -> Field
+    ClassFields     : List(Field) -> Properties
+    ClassFields     : List(Field) * ID -> Properties
+    Splash          : ID -> Splash
+    ClassDefinition : ID * Option(Splash) * List(Properties) -> ClassDef
+    NoteToken       : ID -> NoteToken
+    Class           : ClassDef -> Entity
+    Note            : List(NoteToken) -> Entity
+    Definition      : Entity -> Definition
+    Definition      : Entity * Connection * Entity -> Definition
+    Diagram         : List(Definition) -> Start
+                    : String -> ID
+                    : String -> INT
+
+
+signature
+  constructors
+    Some : a -> Option(a)
+    None : Option(a)
+
+
+signature
+  constructors
+    Cons : a * List(a) -> List(a)
+    Nil  : List(a)
+    Conc : List(a) * List(a) -> List(a)
